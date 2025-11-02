@@ -1,12 +1,12 @@
 name: Fetch Space Data
 
 on:
+  workflow_dispatch:
   schedule:
     # Mars data daily at 2AM
     - cron: '0 2 * * *'
     # NEO data daily at 3AM
     - cron: '0 3 * * *'
-  workflow_dispatch:
 
 jobs:
   fetch-mars:

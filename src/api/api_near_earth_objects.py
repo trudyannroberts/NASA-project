@@ -7,10 +7,12 @@ URL = f"https://api.nasa.gov/neo/rest/v1/feed?api_key={API_KEY}"
 def fetch_neo_data():
     response = requests.get(URL, timeout=10)
     response.raise_for_status()
-    data = response.json()["near_earth_objects"]
+    data = response.json()
     formatted = []
 
-    for date, objects in data.items():
+    neo_data = data.get("near_earth_objects", {})
+    for date, objects in neo_data.items():
+
         for obj in objects:
             obj_id = int(obj["id"])
             name = obj["name"]

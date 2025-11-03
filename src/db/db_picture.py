@@ -26,10 +26,9 @@ def create_space_picture_table():
         cur.execute("""
             CREATE TABLE IF NOT EXISTS space_picture (
                 date DATE PRIMARY KEY,
-                description VARCHAR(500),
-                copyright VARCHAR(100),
-                url VARCHAR(100),
-                updated TIMESTAMP DEFAULT NOW()
+                description TEXT,
+                copyright TEXT,
+                url TEXT
             )
         """)
         conn.commit()
@@ -39,13 +38,13 @@ def create_space_picture_table():
     except DatabaseError as e:
         print(f"Database query error: {e}")
 
-def insert_space_picture(rows):
+def insert_space_picture(date, description, copyright, url):
     try:
         cur.execute("""
             INSERT INTO space_picture (date, description, copyright, url)
             VALUES (%s, %s, %s, %s)
             ON CONFLICT (date) DO NOTHING
-            """, rows)
+            """, (date, description, copyright, url))
 
         conn.commit()
         cur.close()

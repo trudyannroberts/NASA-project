@@ -33,7 +33,7 @@ jobs:
 
       - name: Run Mars API script
         run: |
-          python src/api_mars_weather.py
+          python src/api/api_mars_weather.py
 
   fetch-neo:
     runs-on: ubuntu-latest
@@ -59,4 +59,4 @@ jobs:
 
       - name: Run NEO API script
         run: |
-          python src/api_neo.py
+          python src/api/api_neo.py

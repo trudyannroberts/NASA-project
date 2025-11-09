@@ -1,0 +1,33 @@
+name: Fetch NEO
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'
+
+jobs:
+  fetch-neo:
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 3 * * *' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Set environment variables
+        run: |
+          echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
+
+      - name: Run NEO API script
+        run: |
+          python src/api/api_near_earth_objects.py

@@ -30,4 +30,4 @@ jobs:
 
       - name: Run NEO API script
         run: |
-          python src/api/api_near_earth_objects.py
+          python src/main.py

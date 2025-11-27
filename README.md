@@ -51,8 +51,7 @@ Each dataset is stored in a dedicated PostgreSQL table.
         TIMESTAMP DEFAULT NOW() updated
     }
 
-
-
+---
 
 ## Environment Variables
 
@@ -66,6 +65,8 @@ These must be stored securely in GitHub Secrets:
 Example value:
 
 postgresql://user:password@host:5432/dbname?sslmode=require
+
+---
 
 ## Running Locally
 1. Create .env

@@ -1,4 +1,4 @@
-name: Fetch NEO
+name: Fetch picture
 
 on:
   workflow_dispatch:

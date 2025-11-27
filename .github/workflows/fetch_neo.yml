@@ -29,5 +29,4 @@ jobs:
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
 
       - name: Run NEO API script
-        run: |
-          python src/main.py
+        run: python -m src.main

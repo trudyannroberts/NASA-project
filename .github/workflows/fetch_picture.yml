@@ -30,4 +30,4 @@ jobs:
 
       - name: Run picture API script
         run: |
-          python src/main.py
+          python -m src.main

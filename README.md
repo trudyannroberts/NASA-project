@@ -23,7 +23,6 @@ Each dataset is stored in a dedicated PostgreSQL table.
 ---
 
 ## Database ER Diagram
-erDiagram
 
     mars_weather {
         INTEGER sol PK

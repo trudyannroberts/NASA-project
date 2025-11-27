@@ -29,5 +29,4 @@ jobs:
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
 
       - name: Run picture API script
-        run: |
-          python -m src.main
+        run: python -m src.main

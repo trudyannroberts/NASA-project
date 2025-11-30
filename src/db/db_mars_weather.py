@@ -1,64 +1,48 @@
-import os
-from dotenv import load_dotenv
-from psycopg2 import connect, OperationalError, DatabaseError
+from db import get_db
+from psycopg2 import OperationalError, DatabaseError
 
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-conn = connect(DATABASE_URL)
-cur = conn.cursor()
 
 def create_mars_weather_table():
-    """Connect to DB and create Mars weather table if it doesn't exist.
-    The table stores data on temperatures on Mars and logs updates
-
-    Returns
-    -------
-    conn : psycopg2.connection
-        Database connection object.
-    cur : psycopg2.cursor
-        Database cursor object.
-    """
+    """Create Mars weather table if it doesn't exist."""
     try:
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS mars_weather (
-                sol INTEGER PRIMARY KEY,
-                date DATE,
-                max_temp REAL,
-                min_temp REAL,
-                avg_temp REAL,
-                updated TIMESTAMP DEFAULT NOW()
-            )
-        """)
-        conn.commit()
-        return conn, cur
+        with get_db() as (conn, cur):
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS mars_weather (
+                    sol INTEGER PRIMARY KEY,
+                    date DATE,
+                    max_temp REAL,
+                    min_temp REAL,
+                    avg_temp REAL,
+                    updated TIMESTAMP DEFAULT NOW()
+                )
+            """)
+            conn.commit()
     except (OperationalError, DatabaseError) as e:
         print(f"DB error: {e}")
 
+
+
 def insert_mars_weather(rows):
-    """
-    Insert multiple Mars weather records into the database.
-
-    Automatically logs the action:
-        - updated: current timestamp (DEFAULT NOW())
-
-    Parameters
-    ----------
-    cur : psycopg2.cursor
-        Database cursor.
-    rows : list of tuples
-        Each tuple: (id, name, min_diameter_meters, max_diameter_meters,
-                     is_potential_hazard, close_approach_date, miss_distance_km)
-    """
+    """Insert multiple Mars weather records."""
     try:
-        cur.executemany("""
-        INSERT INTO mars_weather (sol, date, max_temp, min_temp, avg_temp)
-        VALUES (%s, %s, %s, %s, %s)
-        ON CONFLICT (sol) DO NOTHING
-    """, rows)
+        with get_db() as (conn, cur):
+            cur.executemany("""
+                INSERT INTO mars_weather (sol, date, max_temp, min_temp, avg_temp)
+                VALUES (%s, %s, %s, %s, %s)
+                ON CONFLICT (sol) DO NOTHING
+            """, rows)
+            conn.commit()
+    except OperationalError as e:
+        print(f"Database query error: {e}")
 
-        conn.commit()
-        cur.close()
-        conn.close()
-    except (OperationalError) as e:
-        print(f"Database query error:  {e}")
+
+
+def fetch_mars_weather():
+    """Fetch all rows from mars_weather."""
+    try:
+        with get_db() as (conn, cur):
+            cur.execute("SELECT * FROM mars_weather ORDER BY sol DESC")
+            return cur.fetchall()
+    except OperationalError as e:
+        print(f"Database query error: {e}")
+        return None

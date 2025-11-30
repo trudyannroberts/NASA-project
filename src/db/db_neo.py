@@ -1,12 +1,6 @@
-import os
-from dotenv import load_dotenv
-from psycopg2 import connect, OperationalError, DatabaseError
+from psycopg2 import OperationalError, DatabaseError
+from db import get_db
 
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-conn = connect(DATABASE_URL)
-cur = conn.cursor()
 
 def create_near_earth_objects_table():
     """
@@ -23,20 +17,21 @@ def create_near_earth_objects_table():
         Database cursor for executing queries.
     """
     try:
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS near_earth_object (
-                id INTEGER PRIMARY KEY,
-                name TEXT,
-                min_diameter_meters REAL,
-                max_diameter_meters REAL,
-                is_potential_hazard BOOLEAN,
-                close_approach_date DATE,
-                miss_distance_km REAL,
-                updated TIMESTAMP DEFAULT NOW()
-            )
-        """)
-        conn.commit()
-        return conn, cur
+        with get_db() as (conn, cur):
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS near_earth_object (
+                    id INTEGER PRIMARY KEY,
+                    name TEXT,
+                    min_diameter_meters REAL,
+                    max_diameter_meters REAL,
+                    is_potential_hazard BOOLEAN,
+                    close_approach_date DATE,
+                    miss_distance_km REAL,
+                    updated TIMESTAMP DEFAULT NOW()
+                )
+            """)
+            conn.commit()
+            return conn, cur
     except OperationalError as e:
         print(f"Database connection error: {e}")
     except DatabaseError as e:
@@ -58,16 +53,24 @@ def insert_near_earth_objects(rows):
                      is_potential_hazard, close_approach_date, miss_distance_km)
     """
     try:
-        cur.executemany("""
-            INSERT INTO near_earth_object (
-                id, name, min_diameter_meters, max_diameter_meters, is_potential_hazard, close_approach_date, miss_distance_km
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (id) DO NOTHING
-        """, rows)
+        with get_db() as (conn, cur):
+            cur.executemany("""
+                INSERT INTO near_earth_object (
+                    id, name, min_diameter_meters, max_diameter_meters, is_potential_hazard, close_approach_date, miss_distance_km
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (id) DO NOTHING
+            """, rows)
 
         conn.commit()
-        cur.close()
-        conn.close()
     except OperationalError as e:
         print(f"Database query error: {e}")
 
+def fetch_neo():
+    """Fetch all rows near_earth_objects"""
+    try:
+        with get_db() as (conn, cur):
+            cur.execute("SELECT * FROM near_earth_objects ORDER BY id DESC")
+            return cur.fetchall()
+    except OperationalError as e:
+        print(f"Database query error: {e}")
+        return None

@@ -1,12 +1,6 @@
-import os
-from dotenv import load_dotenv
-from psycopg2 import connect, OperationalError, DatabaseError
+from psycopg2 import OperationalError, DatabaseError
+from db import get_db
 
-load_dotenv()
-DATABASE_URL = os.getenv('DATABASE_URL')
-
-conn = connect(DATABASE_URL)
-cur = conn.cursor()
 
 def create_space_picture_table():
     """
@@ -23,14 +17,15 @@ def create_space_picture_table():
         Database cursor for executing queries.
     """
     try:
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS space_picture (
-                date DATE PRIMARY KEY,
-                description TEXT,
-                copyright TEXT,
-                url TEXT
-            )
-        """)
+        with get_db() as (conn, cur):
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS space_picture (
+                    date DATE PRIMARY KEY,
+                    description TEXT,
+                    copyright TEXT,
+                    url TEXT
+                )
+            """)
         conn.commit()
         return conn, cur
     except OperationalError as e:
@@ -40,16 +35,24 @@ def create_space_picture_table():
 
 def insert_space_picture(date, description, copyright, url):
     try:
-        cur.execute("""
-            INSERT INTO space_picture (date, description, copyright, url)
-            VALUES (%s, %s, %s, %s)
-            ON CONFLICT (date) DO NOTHING
-            """, (date, description, copyright, url))
+        with get_db() as (conn, cur):
+            cur.execute("""
+                INSERT INTO space_picture (date, description, copyright, url)
+                VALUES (%s, %s, %s, %s)
+                ON CONFLICT (date) DO NOTHING
+                """, (date, description, copyright, url))
 
         conn.commit()
-        cur.close()
-        conn.close()
     except OperationalError as e:
         print(f"Database query error: {e}")
 
+def fetch_picture():
+    """Fetch all rows from space_picture."""
+    try:
+        with get_db() as (conn, cur):
+            cur.execute("SELECT * FROM space_picture ORDER BY date DESC")
+            return cur.fetchall()
+    except OperationalError as e:
+        print(f"Database query error: {e}")
+        return None
 

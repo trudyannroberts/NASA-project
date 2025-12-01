@@ -1,4 +1,4 @@
-from db import get_db
+from src.db.db import get_db
 from psycopg2 import OperationalError, DatabaseError
 
 

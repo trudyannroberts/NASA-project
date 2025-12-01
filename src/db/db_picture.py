@@ -1,5 +1,5 @@
 from psycopg2 import OperationalError, DatabaseError
-from db import get_db
+from src.db.db import get_db
 
 
 def create_space_picture_table():

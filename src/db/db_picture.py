@@ -48,7 +48,7 @@ def fetch_picture():
     """Fetch all rows from space_picture."""
     try:
         with get_db() as (conn, cur):
-            cur.execute("SELECT * FROM space_picture ORDER BY date DESC")
+            cur.execute("SELECT * FROM space_picture ORDER BY date DESC LIMIT 1")
             return cur.fetchall()
     except OperationalError as e:
         print(f"Database query error: {e}")

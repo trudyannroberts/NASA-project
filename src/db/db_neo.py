@@ -61,7 +61,7 @@ def insert_near_earth_objects(rows):
                 ON CONFLICT (id) DO NOTHING
             """, rows)
 
-        conn.commit()
+            conn.commit()
     except OperationalError as e:
         print(f"Database query error: {e}")
 
@@ -69,7 +69,7 @@ def fetch_neo():
     """Fetch all rows near_earth_objects"""
     try:
         with get_db() as (conn, cur):
-            cur.execute("SELECT * FROM near_earth_objects ORDER BY id DESC")
+            cur.execute("SELECT * FROM near_earth_object ORDER BY id DESC")
             return cur.fetchall()
     except OperationalError as e:
         print(f"Database query error: {e}")

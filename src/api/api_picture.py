@@ -14,7 +14,7 @@ def fetch_picture_data():
 
     date = data["date"]
     description = data["explanation"]
-    copyright = data["copyright"]
+    copyright = data["copyright", None]
     url = data["url"]
 
     return date, description, copyright, url

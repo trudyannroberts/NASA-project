@@ -28,9 +28,7 @@ def create_space_picture_table():
             """)
             conn.commit()
         return conn, cur
-    except OperationalError as e:
-        print(f"Database connection error: {e}")
-    except DatabaseError as e:
+    except (OperationalError, DatabaseError) as e:
         print(f"Database query error: {e}")
 
 def insert_space_picture(date, description, copyright, url):

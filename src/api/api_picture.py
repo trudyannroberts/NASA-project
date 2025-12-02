@@ -12,9 +12,12 @@ def fetch_picture_data():
     response.raise_for_status()
     data = response.json()
 
-    date = data["date"]
-    description = data["explanation"]
-    url = data["url"]
+    date = data.get("date")
+    description = data.get("explanation")
+    copyright = data.get("copyright")
+    url = data.get("url")
 
-    return date, description, url
+    return date, description, copyright, url
+
+print(fetch_picture_data())
 

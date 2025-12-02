@@ -7,8 +7,6 @@ from src.db.db_picture import fetch_picture
 
 
 def show_picture():
-    st.title("Picture of the day")
-
     pic_row = fetch_picture()
     if not pic_row:
         st.warning("No picture available")

@@ -8,7 +8,6 @@ sys.path.append(PROJECT_ROOT)
 from src.db.db_mars_weather import fetch_mars_weather
 
 def show_mars_weather():
-    st.title("Mars Temperatures")
     mars_weather_rows = fetch_mars_weather()
     df = pd.DataFrame(
         [row[:5] for row in mars_weather_rows],

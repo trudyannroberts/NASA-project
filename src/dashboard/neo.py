@@ -51,8 +51,6 @@ def position_neos_3d(df):
 # Main Streamlit function
 # -----------------------------
 def show_neo():
-    st.title("Near Earth Objects")
-
     neo_rows = fetch_neo()
     df = pd.DataFrame([row[1:7] for row in neo_rows],
                       columns=['name', 'min_diameter', 'max_diameter', 'is_potential_hazard',

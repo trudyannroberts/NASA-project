@@ -1,5 +1,5 @@
 import streamlit as st
-import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
 import sys
 import os
@@ -13,25 +13,44 @@ def show_mars_weather():
         [row[:5] for row in mars_weather_rows],
         columns=['sol', 'date', 'max_temp', 'min_temp', 'avg_temp']
     )
-    df_melted = df.melt(
-        id_vars='date',
-        value_vars=['max_temp', 'min_temp', 'avg_temp'],
-        var_name='Temperature Type',
-        value_name='Temperature (°C)'
-    )
-    legend_mapping = {
-        'max_temp': 'Maximum Temperature',
-        'min_temp': 'Minimum Temperature',
-        'avg_temp': 'Average Temperature'
-    }
-    df_melted['Temperature Type'] = df_melted['Temperature Type'].map(legend_mapping)
 
-    fig = px.line(
-        df_melted,
-        x='date',
-        y='Temperature (°C)',
-        color='Temperature Type',
-        labels={'date': 'Date'}
+    fig = go.Figure()
+
+    # Min temp bar
+    fig.add_trace(go.Bar(
+        x=df['date'],
+        y=df['min_temp'],
+        name='Min Temperature',
+        marker_color='steelblue',
+        opacity=0.7
+    ))
+
+    # Max temp bar
+    fig.add_trace(go.Bar(
+        x=df['date'],
+        y=df['max_temp'],
+        name='Max Temperature',
+        marker_color='lightblue',
+        opacity=0.7
+    ))
+
+    # Avg temp line
+    fig.add_trace(go.Scatter(
+        x=df['date'],
+        y=df['avg_temp'],
+        name='Avg Temperature',
+        mode='lines+markers',
+        line=dict(color='gold', width=2),
+        marker=dict(size=4)
+    ))
+
+    fig.update_layout(
+        barmode='group',
+        xaxis_title='Date',
+        yaxis_title='Temperature (°C)',
+        yaxis=dict(autorange="reversed"),
+        hovermode='x unified',
+        legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1)
     )
-    fig.update_layout(hovermode="x")
-    return st.plotly_chart(fig)
+
+    return st.plotly_chart(fig, use_container_width=True)

@@ -6,23 +6,36 @@ sys.path.append(PROJECT_ROOT)
 from src.dashboard import mars_weather, neo, picture
 
 
-st.set_page_config(page_title="NASA Dashboard", layout="wide")
-title = st.title("NASA Dashboard")
-title.markdown(
-    "<h1 style='text-align: center; color: #1f77b4; padding: 10px;'>NASA Dashboard</h1>",
+st.set_page_config(page_title="Explore Space", layout="wide")
+
+st.markdown("""
+    <style>
+        .block-container {
+            max-width: 1100px;
+            margin: auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+st.markdown(
+    "<h1 style='text-align: center; color: #1f77b4; padding: 10px;'>Explore Space</h1>",
     unsafe_allow_html=True
 )
-# Top section: Picture of the day
-with st.container():
+
+pic_tab, neo_tab, mars_tab = st.tabs(["Picture of the day", "Near Earth Objects", "Mars Weather"])
+
+with pic_tab:
     st.markdown("## Picture of the Day")
     picture.show_picture()
-
-# Middle section: Mars weather
-with st.container():
-    st.markdown("## Mars Weather")
-    mars_weather.show_mars_weather()
-
-# Bottom section: Near Earth Objects
-with st.container():
-    st.markdown("## Near Earth Objects")
-    neo.show_neo()
+with mars_tab:
+    # Middle section: Mars weather
+    with st.container():
+        st.markdown("## Mars Weather")
+        mars_weather.show_mars_weather()
+with neo_tab:
+    # Bottom section: Near Earth Objects
+    with st.container():
+        st.markdown("## Near Earth Objects")
+        neo.show_neo()

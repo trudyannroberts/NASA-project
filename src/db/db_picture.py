@@ -54,3 +54,12 @@ def fetch_picture():
         print(f"Database query error: {e}")
         return None
 
+def fetch_all_pictures():
+    """Fetch all rows from space_picture."""
+    try:
+        with get_db() as (conn, cur):
+            cur.execute("SELECT * FROM space_picture ORDER BY date")
+            return cur.fetchall()
+    except OperationalError as e:
+        print(f"Database query error: {e}")
+        return None

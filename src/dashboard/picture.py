@@ -33,10 +33,25 @@ def show_picture():
 
     st.subheader(date)
 
-    st.image(url, use_container_width=True)
-    st.caption(description)
-    if copyright:
-        st.caption(f"© {copyright}")
+    st.markdown("""
+        <style>
+            [data-testid="stImage"] img {
+                max-width: 700px;
+                width: 100%;
+                display: block;
+                margin: auto;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.image(url, use_container_width=True)
+    with col2:
+        st.caption(description)
+        if copyright:
+            st.caption(f"© {copyright}")
 
     # Navigation row
     col1, col2, col3 = st.columns([1, 7, 1])
